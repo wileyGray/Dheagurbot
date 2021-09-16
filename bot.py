@@ -21,8 +21,9 @@ async def play(ctx, url: str):
     voiceChannel = ctx.message.author.voice.channel
     try:
         await voiceChannel.connect()
-    finally:
+    except:
         pass
+
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
     file_name = download.download_song(url)

@@ -1,6 +1,5 @@
 import discord
 import os
-import youtube_dl
 import discord.ext
 import time
 import SongQueue
@@ -10,13 +9,13 @@ from mutagen.mp3 import MP3
 
 
 client = commands.Bot(command_prefix=";")
-print(os.listdir())
+q = SongQueue.SongQueue
 
 @client.command()
 async def hi(ctx):
     await ctx.send("fuck you")
 
-q = SongQueue.SongQueue
+
 @client.command()
 async def play(ctx, url: str):
     voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
@@ -29,6 +28,7 @@ async def play(ctx, url: str):
     file_name = download.download_song(url)
     print(file_name)
     voice.play(discord.FFmpegPCMAudio(file_name))
+
 
 @client.command()
 async def leave(ctx):
@@ -74,12 +74,22 @@ async def cum(ctx):
     try:
         await voiceChannel.connect()
     except:
-        print("dheagurbot already connected to ")
+        pass #probably should do something here to handle stuff
 
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-
-    # for i in range(int(args)):
     voice.play(discord.FFmpegPCMAudio("quin/quin.mp3"))
+
+@client.command()
+async def bruh(ctx):
+    voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
+
+    try:
+        await voiceChannel.connect()
+    except:
+        pass  # probably should do something here to handle stuff
+
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    voice.play(discord.FFmpegPCMAudio("songs/Bruh - Sound Effect (HD).mp3"))
 
 
 
@@ -133,7 +143,6 @@ async def on_message(message):
     elif command == "cum":
         await message.channel.send('matthew recycles cum')
         return
-
 
 
 token_file = open("../token.txt", "r")

@@ -18,11 +18,11 @@ async def hi(ctx):
 
 @client.command()
 async def play(ctx, url: str):
-    voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
+    voiceChannel = ctx.message.author.voice.channel
     try:
         await voiceChannel.connect()
-    except:
-        x = 4
+    finally:
+        pass
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
     file_name = download.download_song(url)
@@ -69,7 +69,7 @@ async def stop(ctx):
 
 @client.command()
 async def cum(ctx):
-    voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
+    voiceChannel = ctx.message.author.voice.channel
 
     try:
         await voiceChannel.connect()
@@ -81,7 +81,7 @@ async def cum(ctx):
 
 @client.command()
 async def bruh(ctx):
-    voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
+    voiceChannel = ctx.message.author.voice.channel
 
     try:
         await voiceChannel.connect()
@@ -100,6 +100,9 @@ def contains_command(string):
     return 0
 
 
+####################
+#past this everything is kinda deprecated, it's only use is the complaint channel filerting
+####################
 # these are commands XD
 commands = {
     "play",
@@ -108,7 +111,8 @@ commands = {
     "leave",
     "cum",
     "shutup",
-    "test"
+    "test",
+    "bruh"
 }
 
 

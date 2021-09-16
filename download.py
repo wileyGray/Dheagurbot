@@ -21,7 +21,8 @@ def download_song(url : str):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': song_path
+        'outtmpl': song_path,
+        'default-search': "ytsearch"
     }
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:

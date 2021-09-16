@@ -5,6 +5,8 @@ import discord.ext
 import time
 import SongQueue
 from discord.ext import commands
+import download
+from mutagen.mp3 import MP3
 
 
 client = commands.Bot(command_prefix=";")
@@ -17,16 +19,6 @@ async def hi(ctx):
 q = SongQueue.SongQueue
 @client.command()
 async def play(ctx, url: str):
-    song_there = os.path.isfile("Bot\songs\song.mp3")
-    while (True):
-        try:
-            if song_there:
-                os.remove("song.mp3")
-        except PermissionError:
-            time.sleep(5)
-            break
-
-
     voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='General')
     try:
         await voiceChannel.connect()
@@ -34,21 +26,9 @@ async def play(ctx, url: str):
         x = 4
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    for file in os.listdir("\songs"):
-        if file.endswith(".mp3"):
-            os.rename(file, "song.mp3")
-    voice.play(discord.FFmpegPCMAudio("song.mp3"))
-
+    file_name = download.download_song(url)
+    print(file_name)
+    voice.play(discord.FFmpegPCMAudio(file_name))
 
 @client.command()
 async def leave(ctx):

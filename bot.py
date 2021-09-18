@@ -9,7 +9,8 @@ from mutagen.mp3 import MP3
 
 
 client = commands.Bot(command_prefix=";")
-q = SongQueue.SongQueue
+q = SongQueue.SongQueue()
+
 
 @client.command()
 async def hi(ctx):
@@ -18,25 +19,28 @@ async def hi(ctx):
 
 @client.command()
 async def play(ctx, url: str):
-    voiceChannel = ctx.message.author.voice.channel
-    try:
-        await voiceChannel.connect()
-    except:
-        pass
-
-    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-
     file_name = download.download_song(url)
-    print(file_name)
-    voice.play(discord.FFmpegPCMAudio(file_name))
+    q.enqueue(file_name, url, ctx.message.author)
+    if q.has_one_song():
+        try:
+            voice_channel = ctx.message.author.voice.channel
+            await voice_channel.connect()
+        except:
+            pass
+        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        file_name = q.peek().path
+        while True:
+            try:
+                voice.play(discord.FFmpegPCMAudio(file_name))
+                q.pop_song()
+                break
+            except:
+                time.sleep(1)
 
 
 @client.command()
 async def leave(ctx):
-    try:
-        os.remove("song.mp3")
-    except:
-        print("continuing")
+    q.clear()
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     if voice.is_connected():
         await voice.disconnect()
@@ -153,7 +157,7 @@ async def on_message(message):
 token_file = open("../token.txt", "r")
 token = token_file.read()
 token_file.close()
-client.run(token);
+client.run(token)
 
 
 

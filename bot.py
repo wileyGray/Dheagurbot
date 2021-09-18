@@ -35,7 +35,7 @@ async def play(ctx, url: str):
                 q.pop_song()
                 break
             except:
-                time.sleep(1)
+                time.sleep(10)
 
 
 @client.command()

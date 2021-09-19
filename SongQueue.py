@@ -1,30 +1,35 @@
 class Entry:
-    def __init__(self, path, url, requester):
+    def __init__(self, path, url, requester, runtime):
         self.path = path
         self.url = url
         self.requester = requester
+        self.runtime = runtime
 
+    def get_runtime(self):
+        return self.runtime
 
 class SongQueue:
 
     def __init__(self):
         self.songs = []
+        self.paused = False
 
     def peek(self):
         return self.songs[0]
 
     def pop_song(self):
         if len(self.songs) == 1:
+            entry = self.songs[0]
             self.clear()
-            return
-        self.songs = self.songs.pop(0)
+            return entry
+        return self.songs.pop(0)
 
-    def enqueue(self, path, url, requester):
-        entry = Entry(path, url, requester)
+    def enqueue(self, entry):
         self.songs.append(entry)
 
     def clear(self):
         self.songs = []
+        self.paused = False
 
     def isEmpty(self):
         print(len(self.songs))
@@ -33,14 +38,21 @@ class SongQueue:
     def has_one_song(self):
         return len(self.songs) == 1
 
-    def remove_from_queue(self, path, url, requester): #kinda useless and will probably never be used
-        dequeuedEntry = Entry(path, url, requester)
-        if self.contains(path, url, requester):
-            self.songs.remove(Entry(path, url, requester))
+    def remove_from_queue(self, entry): #kinda useless and will probably never be used
+        if self.contains(entry):
+            self.songs.remove(entry)
         else:
-            raise UserWarning("the entry requested doesnt exist: " + str(dequeuedEntry))
+            raise UserWarning("the entry requested doesnt exist: " + str(entry))
 
-    def contains(self, path, url, requester):
-        containedEntry = Entry(path, url, requester)
-        return self.songs.__contains__(containedEntry)
+    def contains(self, entry):
+        return self.songs.__contains__(entry)
+
+    def pause(self):
+        self.paused = True
+
+    def unpause(self):
+        self.paused = False
+
+    def is_paused(self):
+        return self.paused
 

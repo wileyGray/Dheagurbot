@@ -1,3 +1,5 @@
+import sys
+
 import discord
 import os
 import discord.ext
@@ -19,23 +21,47 @@ async def hi(ctx):
 
 @client.command()
 async def play(ctx, url: str):
-    file_name = download.download_song(url)
-    q.enqueue(file_name, url, ctx.message.author)
-    if q.has_one_song():
+
+    song_path = download.download_song(url)
+
+    mp3 = MP3(song_path)
+    song_info = mp3.info
+    playtime = int(song_info.length)
+
+    song_entry = SongQueue.Entry(song_path, url, ctx.message.author, playtime)
+    q.enqueue(song_entry)
+
+    if q.has_one_song() or q.is_paused():
+
+        if q.is_paused():
+            #some logic
+            q.unpause()
+        else:
+            song_entry = q.pop_song()
+            sleep_time = song_entry.get_runtime() + 1
+            song_path = song_entry.path
+
         try:
             voice_channel = ctx.message.author.voice.channel
             await voice_channel.connect()
         except:
             pass
+
         voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        file_name = q.peek().path
-        while True:
+        loopcounter = 0
+        while not q.is_paused():
+            loopcounter += 1
+            print("looped " + str(loopcounter) + " times")
             try:
-                voice.play(discord.FFmpegPCMAudio(file_name))
-                q.pop_song()
-                break
+                voice.play(discord.FFmpegPCMAudio(song_path))
+                time.sleep(sleep_time)
+                if q.isEmpty():
+                    return
+                song_entry = q.pop_song()
+                sleep_time = song_entry.runtime + 1
+                song_path = song_entry.path
             except:
-                time.sleep(10)
+                print(sys.exc_info()[0], " ", sys.exc_info()[1])
 
 
 @client.command()
@@ -50,6 +76,7 @@ async def leave(ctx):
 
 @client.command()
 async def pause(ctx):
+    print("attempting to pause")
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     if voice.is_playing():
         voice.pause()

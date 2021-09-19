@@ -16,7 +16,7 @@ q = SongQueue.SongQueue()
 
 @client.command()
 async def hi(ctx):
-    await ctx.send("fuck you")
+    await ctx.send("fuck you", tts=true)
 
 
 @client.command()

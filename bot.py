@@ -126,9 +126,9 @@ async def bruh(ctx):
 @client.command()
 async def wiki(ctx, url: str):
     wikiText = Wiki(url)
-
+    channel = client.get_channel(888263334258958336)
     for text in wikiText.pTagsToText:
-        ctx.send(text, tts=True)
+        channel.send(text, tts=True)
 
 
 

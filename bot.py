@@ -8,6 +8,7 @@ import SongQueue
 from discord.ext import commands
 import download
 from mutagen.mp3 import MP3
+import Wiki
 
 
 client = commands.Bot(command_prefix=";")
@@ -126,10 +127,21 @@ async def bruh(ctx):
 
 @client.command()
 async def wiki(ctx, url: str):
-    wikiText = Wiki(url)
-    channel = client.get_channel(888263334258958336)
+    wikiText = Wiki.Wiki(url)
+    final_text = ""
+    text_arr = [final_text]
     for text in wikiText.pTagsToText:
-        channel.send(text, tts=True)
+        text = text.strip()
+        if text != '':
+            current_concat = text_arr[len(text_arr) - 1]
+            if len(( current_concat + " " + text)) < 2000:
+                text_arr[len(text_arr) - 1] += " " + text
+            else:
+                text_arr.append(text)
+
+    for texts in text_arr:
+        await ctx.send(texts, tts=True)
+
 
 
 

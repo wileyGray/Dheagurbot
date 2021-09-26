@@ -16,7 +16,7 @@ q = SongQueue.SongQueue()
 
 @client.command()
 async def hi(ctx):
-    await ctx.send("fuck you", tts=true)
+    await ctx.send("fuck you", tts=True)
 
 
 @client.command()
@@ -123,6 +123,13 @@ async def bruh(ctx):
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     voice.play(discord.FFmpegPCMAudio("songs/Bruh - Sound Effect (HD).mp3"))
 
+@client.command()
+async def wiki(ctx, url: str):
+    wikiText = Wiki(url)
+
+    for text in wikiText.pTagsToText:
+        ctx.send(text, tts=True)
+
 
 
 def contains_command(string):
@@ -145,6 +152,7 @@ commands = {
     "shutup",
     "test",
     "bruh"
+    "wiki"
 }
 
 

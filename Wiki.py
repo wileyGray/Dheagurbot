@@ -7,23 +7,21 @@ class Wiki:
 
 		self.soup = BeautifulSoup(self.page.content, "html.parser")
 
-		self.results = self.soup.find(id="mw-content-text")
+		self.mainContent = self.soup.find(id="mw-content-text")
 
-		#print(self.results.prettify())
+		self.allPTags = self.mainContent.find_all("p")
 
-		self.results2 = self.results.find_all("p")
+		self.pTagsToText = [text.text for text in self.allPTags]
 
-		for text in self.results2:
-			print(text.text)
-
-	def getText(url: str):
-		print(self.page.text)
-
-def main():
-	url = "https://en.wikipedia.org/wiki/The_Move_(XM)"
-	url = "https://en.wikipedia.org/wiki/Czech_Christmas_Mass"
-	print(url)
-	test = Wiki(url)
+		#for text in self.pTagsToText:
+			#print(text)
 
 
-main()
+#def main():
+	#url = "https://en.wikipedia.org/wiki/The_Move_(XM)"
+	#url = "https://en.wikipedia.org/wiki/Czech_Christmas_Mass"
+	#print(url)
+	#test = Wiki(url)
+
+
+#main()

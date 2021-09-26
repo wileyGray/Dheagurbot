@@ -38,7 +38,8 @@ async def play(ctx, url: str):
             q.unpause()
         else:
             song_entry = q.pop_song()
-            sleep_time = song_entry.get_runtime() + 1
+            sleep_time\
+                = song_entry.get_runtime() + 1
             song_path = song_entry.path
 
         try:
@@ -54,7 +55,7 @@ async def play(ctx, url: str):
             print("looped " + str(loopcounter) + " times")
             try:
                 voice.play(discord.FFmpegPCMAudio(song_path))
-                time.sleep(sleep_time)
+                time.sleep(1)
                 if q.isEmpty():
                     return
                 song_entry = q.pop_song()

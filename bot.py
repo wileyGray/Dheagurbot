@@ -130,11 +130,11 @@ async def wiki(ctx, url: str):
     wikiText = Wiki.Wiki(url)
     final_text = ""
     text_arr = [final_text]
-    for text in wikiText.pTagsToText:
+    for text in wikiText.pTagsToText: ##this is to condense the messages so it sends 2 instead of 20
         text = text.strip()
         if text != '':
             current_concat = text_arr[len(text_arr) - 1]
-            if len(( current_concat + " " + text)) < 2000:
+            if len(( current_concat + " " + text)) < 2000: #length 2000 and above is not allowed in tts
                 text_arr[len(text_arr) - 1] += " " + text
             else:
                 text_arr.append(text)

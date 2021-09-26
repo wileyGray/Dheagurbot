@@ -8,6 +8,9 @@ class Entry:
     def get_runtime(self):
         return self.runtime
 
+    def set_runtime(self, subtracted):
+        self.runtime -= subtracted
+
 class SongQueue:
 
     def __init__(self):

@@ -27,31 +27,38 @@ async def play(ctx, url: str):
     mp3 = MP3(song_path)
     song_info = mp3.info
     playtime = int(song_info.length)
+    sleep_time = playtime + 1
 
     song_entry = SongQueue.Entry(song_path, url, ctx.message.author, playtime)
     q.enqueue(song_entry)
 
+    try:
+        voice_channel = ctx.message.author.voice.channel
+        await voice_channel.connect()
+    except:
+        pass
+
     if q.has_one_song():
+        while True:
+            voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
-        try:
-            voice_channel = ctx.message.author.voice.channel
-            await voice_channel.connect()
-        except:
-            pass
+            song_entry = q.peek()
+            sleep_time = song_entry.get_runtime() + 1
+            song_entry.set_runtime(30)
+            song_path = song_entry.path
 
-        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-
-        song_entry = q.pop_song()
-        sleep_time = song_entry.get_runtime() + 1
-        song_path = song_entry.path
-        try:
-            voice.play(discord.FFmpegPCMAudio(song_path))
-            print(sleep_time)
-
-            if q.isEmpty():
-                return
-        except:
-            print(sys.exc_info()[0], " ", sys.exc_info()[1])
+            try:
+                voice.play(discord.FFmpegPCMAudio(song_path))
+                q.pop_song()
+                if q.isEmpty():
+                    return
+            except:
+                if sleep_time > playtime:
+                    time.sleep(30)
+                    sleep_time -= 30
+                else:
+                    time.sleep(sleep_time)
+                print(sys.exc_info()[0], " ", sys.exc_info()[1])
 
 
 @client.command()

@@ -10,7 +10,6 @@ import download
 from mutagen.mp3 import MP3
 import Wiki
 
-
 client = commands.Bot(command_prefix=";")
 q = SongQueue.SongQueue()
 
@@ -32,16 +31,7 @@ async def play(ctx, url: str):
     song_entry = SongQueue.Entry(song_path, url, ctx.message.author, playtime)
     q.enqueue(song_entry)
 
-    if q.has_one_song() or q.is_paused():
-
-        if q.is_paused():
-            #some logic
-            q.unpause()
-        else:
-            song_entry = q.pop_song()
-            sleep_time\
-                = song_entry.get_runtime() + 1
-            song_path = song_entry.path
+    if q.has_one_song():
 
         try:
             voice_channel = ctx.message.author.voice.channel
@@ -50,20 +40,18 @@ async def play(ctx, url: str):
             pass
 
         voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        loopcounter = 0
-        while not q.is_paused():
-            loopcounter += 1
-            print("looped " + str(loopcounter) + " times")
-            try:
-                voice.play(discord.FFmpegPCMAudio(song_path))
-                time.sleep(1)
-                if q.isEmpty():
-                    return
-                song_entry = q.pop_song()
-                sleep_time = song_entry.runtime + 1
-                song_path = song_entry.path
-            except:
-                print(sys.exc_info()[0], " ", sys.exc_info()[1])
+
+        song_entry = q.pop_song()
+        sleep_time = song_entry.get_runtime() + 1
+        song_path = song_entry.path
+        try:
+            voice.play(discord.FFmpegPCMAudio(song_path))
+            print(sleep_time)
+
+            if q.isEmpty():
+                return
+        except:
+            print(sys.exc_info()[0], " ", sys.exc_info()[1])
 
 
 @client.command()
@@ -125,6 +113,9 @@ async def bruh(ctx):
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
     voice.play(discord.FFmpegPCMAudio("songs/Bruh - Sound Effect (HD).mp3"))
 
+async def hollup():
+    time.sleep(5)
+
 @client.command()
 async def wiki(ctx, url: str):
     wikiText = Wiki.Wiki(url)
@@ -134,7 +125,7 @@ async def wiki(ctx, url: str):
         text = text.strip()
         if text != '':
             current_concat = text_arr[len(text_arr) - 1]
-            if len(( current_concat + " " + text)) < 2000: #length 2000 and above is not allowed in tts
+            if len((current_concat + " " + text)) < 2000: #length 2000 and above is not allowed in tts
                 text_arr[len(text_arr) - 1] += " " + text
             else:
                 text_arr.append(text)
